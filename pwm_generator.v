@@ -1,18 +1,23 @@
 module pwm_generator (
     input wire clk,
     input wire reset,
-    input wire [7:0] duty, // Duty cycle (0-255)
+    input wire [7:0] duty_cycle,
     output reg pwm_out
 );
     reg [7:0] counter;
 
     always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            counter <= 8'b0;
-            pwm_out <= 1'b0;
-        end else begin
-            counter <= counter + 1;
-            pwm_out <= (counter < duty) ? 1'b1 : 1'b0;
-        end
+        if (reset)
+            counter <= 8'd0;
+        else
+            counter <= counter + 1'b1;
     end
+
+    always @(posedge clk) begin
+        pwm_out <= (counter < duty_cycle) ? 1'b1 : 1'b0;
+    end
+
+    wire unused_counter_signal;
+    assign unused_counter_signal = ^counter;
+
 endmodule
